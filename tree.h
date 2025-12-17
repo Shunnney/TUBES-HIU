@@ -4,46 +4,45 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <map>
-#include <algorithm> // Diperlukan untuk std::remove di tree.cpp, meskipun seringnya ditaruh di .cpp
+#include <algorithm> // Diperlukan untuk std::remove di tree.cpp
 
-//menjelaskan taxonomic yg fix untuk level strukturnya
+// Fixed taxonomic structure levels
 const std::vector<std::string> TAX_LEVELS = {
     "Class", "Order", "Family", "Genus", "Species"
 };
-const size_t REQUIRED_TAX_LEVELS = TAX_LEVELS.size(); //ada 5 level taxonmic
-const size_t REQUIRED_TOTAL_INPUTS = TAX_LEVELS.size() + 1; // 6 itu 5 level + 1 nama biasa(common name)
+const size_t REQUIRED_TAX_LEVELS = TAX_LEVELS.size(); // 5 taxonomic levels
 
-// sruktur nodenya
+// Node structure
 struct Node {
-    std::string name;             //"Chondrichthyes", "carcharias" (taxonomic nya)
+    std::string name;             //"Chondrichthyes", "carcharias" (taxonomic name)
     std::string level;            //"Class", "Species" 
-    std::string commonName;       //"Great White Shark" ini cuman buat spesies levelny
+    std::string commonName;       //"Great White Shark" (only for Species level)
     std::string wikiLink;         // <-- NEW: Link Wikipedia
-    std::vector<Node*> children;  // list pointer untuk node anakan
+    std::vector<Node*> children;  // list of child node pointers
 };
 
-// --- FUNGSI UTILITY ---
-std::string toLower(const std::string& str); // Deklarasi ulang agar bisa digunakan di mana saja
+// --- UTILITY FUNCTIONS ---
+std::string toLower(const std::string& str); 
 Node* createNode(const std::string& name, const std::string& level);
+Node* findChild(Node* parent, const std::string& name); // Re-declared for completeness
 
-// --- FUNGSI CRUD: CREATE (Add) ---
-// Update parameter untuk menerima wikiLink
+// --- CRUD FUNCTIONS: CREATE (Add) ---
+// Updated parameter to accept wikiLink
 Node* addSpeciesPath(Node* root, const std::vector<std::string>& path, const std::string& commonName, const std::string& wikiLink);
 
-// --- FUNGSI CRUD: READ (Search/Display) ---
+// --- CRUD FUNCTIONS: READ (Search/Display) ---
 Node* searchNode(Node* root, const std::string& name);
 void displayTree(Node* root, int depth = 0);
 
-// --- FUNGSI CRUD: UPDATE ---
+// --- CRUD FUNCTIONS: UPDATE ---
+// Implemented to address the linker error
 bool updateSpecies(Node* speciesNode, const std::string& newCommonName, const std::string& newWikiLink);
 
-// --- FUNGSI CRUD: DELETE ---
-// Fungsi ini juga mengembalikan Node* agar dapat menangani pembaruan root (meskipun dalam kasus ini tidak perlu karena Class tidak boleh dihapus)
-// Parent digunakan untuk menghapus anak dari daftar anak Parent.
-Node* deleteSpecies(Node* root, const std::string& speciesName, Node* parent = nullptr);
+// --- CRUD FUNCTIONS: DELETE ---
+// Implemented to address the linker error
+Node* deleteSpecies(Node* root, const std::string& speciesName); // Simplified signature for main.cpp call
 
-// Fungsi hapus seluruh tree (untuk exit)
+// Function to delete the entire tree
 void deleteTree(Node* root);
 
 #endif
