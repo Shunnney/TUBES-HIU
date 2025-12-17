@@ -1,48 +1,52 @@
+CLASS TREE.H
+
 #ifndef TREE_H
 #define TREE_H
 
 #include <iostream>
 #include <string>
 #include <vector>
-#include <algorithm> // Diperlukan untuk std::remove di tree.cpp
+#include <map>
+#include <algorithm> 
 
-// Fixed taxonomic structure levels
+//menjelaskan taxonomic yg fix untuk level strukturnya
 const std::vector<std::string> TAX_LEVELS = {
     "Class", "Order", "Family", "Genus", "Species"
 };
-const size_t REQUIRED_TAX_LEVELS = TAX_LEVELS.size(); // 5 taxonomic levels
+const size_t REQUIRED_TAX_LEVELS = TAX_LEVELS.size(); 
+const size_t REQUIRED_TOTAL_INPUTS = TAX_LEVELS.size() + 1;
 
-// Node structure
+// sruktur nodenya
 struct Node {
-    std::string name;             //"Chondrichthyes", "carcharias" (taxonomic name)
-    std::string level;            //"Class", "Species" 
-    std::string commonName;       //"Great White Shark" (only for Species level)
-    std::string wikiLink;         // <-- NEW: Link Wikipedia
-    std::vector<Node*> children;  // list of child node pointers
+    std::string name;             
+    std::string level;            
+    std::string commonName;       
+    std::string wikiLink;         // Link Wikipedia
+    std::vector<Node*> children;  
 };
 
-// --- UTILITY FUNCTIONS ---
+// --- FUNGSI UTILITY ---
 std::string toLower(const std::string& str); 
 Node* createNode(const std::string& name, const std::string& level);
-Node* findChild(Node* parent, const std::string& name); // Re-declared for completeness
 
-// --- CRUD FUNCTIONS: CREATE (Add) ---
-// Updated parameter to accept wikiLink
+// --- FUNGSI CRUD: CREATE (Add) ---
 Node* addSpeciesPath(Node* root, const std::vector<std::string>& path, const std::string& commonName, const std::string& wikiLink);
 
-// --- CRUD FUNCTIONS: READ (Search/Display) ---
+// --- FUNGSI CRUD: READ (Search/Display) ---
 Node* searchNode(Node* root, const std::string& name);
 void displayTree(Node* root, int depth = 0);
 
-// --- CRUD FUNCTIONS: UPDATE ---
-// Implemented to address the linker error
+// --- FUNGSI CRUD: UPDATE ---
 bool updateSpecies(Node* speciesNode, const std::string& newCommonName, const std::string& newWikiLink);
 
-// --- CRUD FUNCTIONS: DELETE ---
-// Implemented to address the linker error
-Node* deleteSpecies(Node* root, const std::string& speciesName); // Simplified signature for main.cpp call
-
-// Function to delete the entire tree
+// --- FUNGSI CRUD: DELETE ---
+// Parent diperlukan untuk menghapus node dari children vector
+Node* deleteSpecies(Node* root, const std::string& speciesName, Node* parent = nullptr);
 void deleteTree(Node* root);
+
+// --- FUNGSI TRAVERSAL ---
+void preOrderTraversal(Node* root);
+void postOrderTraversal(Node* root);
+void levelOrderTraversal(Node* root); 
 
 #endif
