@@ -18,6 +18,7 @@ string readInput(bool isLine = false) {
         getline(cin, input);
     } else {
         // Use for taxonomic names (single word)
+        // NOTE: This will only read up to the first whitespace!
         cin >> input;
     }
     return input;
@@ -32,9 +33,16 @@ void openWikipediaLink(const string& url) {
 
     cout << "\n[INFO] Attempting to open Wikipedia link: " << url << "\n";
     
+    string command;
     #ifdef _WIN32
         // Windows command
-        string command = "start " + url;
+        command = "start " + url;
+    #elif __APPLE__
+        // macOS command
+        command = "open " + url;
+    #else 
+        // Linux/Unix command (using xdg-open which is common)
+        command = "xdg-open " + url;
     #endif
 
     // Execute the command
@@ -49,15 +57,16 @@ int main() {
     // --- Example Species Data ---
     const vector<string> greatWhiteTax = {"Chondrichthyes", "Lamniformes", "Lamnidae", "Carcharodon", "carcharias"};
     const string greatWhiteCommonName = "Great White Shark";
-    const string greatWhiteWiki = "https://en.wikipedia.org/wiki/Great_white_shark"; // <-- NEW LINK
+    const string greatWhiteWiki = "https://en.wikipedia.org/wiki/Great_white_shark"; 
     
     const vector<string> tigerSharkTax = {"Chondrichthyes", "Carcharhiniformes", "Carcharhinidae", "Galeocerdo", "cuvier"};
     const string tigerSharkCommonName = "Tiger Shark";
-    const string tigerSharkWiki = "https://en.wikipedia.org/wiki/Tiger_shark"; // <-- NEW LINK
+    const string tigerSharkWiki = "https://en.wikipedia.org/wiki/Tiger_shark"; 
 
     // Automatically populate a few paths for demonstration (with the new wiki link)
-    root = addSpeciesPath(root, greatWhiteTax, greatWhiteCommonName, greatWhiteWiki); // ADDED WIKI LINK
-    root = addSpeciesPath(root, tigerSharkTax, tigerSharkCommonName, tigerSharkWiki); // ADDED WIKI LINK
+    // FIX: Calling the 4-argument version of addSpeciesPath
+    root = addSpeciesPath(root, greatWhiteTax, greatWhiteCommonName, greatWhiteWiki); 
+    root = addSpeciesPath(root, tigerSharkTax, tigerSharkCommonName, tigerSharkWiki); 
     cout << "\n[INFO] Two example shark species have been pre-inserted.\n";
 
 
@@ -113,7 +122,7 @@ int main() {
                 cout << "Enter Wikipedia Link (URL, optional): ";
                 string wikiLinkInput = readInput(true);
                 
-                // Call the updated function
+                // FIX: Call the 4-argument function
                 root = addSpeciesPath(root, taxonomicPath, commonNameInput, wikiLinkInput); 
                 
                 break;
@@ -139,6 +148,7 @@ int main() {
                     if (!found->commonName.empty()) {
                         cout << "Common Name: " << found->commonName << "\n";
                     }
+                    // FIX: Check for the new wikiLink member
                     if (!found->wikiLink.empty()) {
                         cout << "Wikipedia Link: " << found->wikiLink << "\n";
                         cout << "Want to open the link now? (y/n): ";
@@ -159,7 +169,6 @@ int main() {
                 // --- DISPLAY (READ ALL) ---
                 cout << "\n--- Full Shark Taxonomy Tree ---\n";
                 if (root) {
-                    // 
                     displayTree(root);
                 } else {
                     cout << "The tree is currently empty.\n";
@@ -194,6 +203,7 @@ int main() {
                         break;
                     }
 
+                    // FIX: Calling the implemented updateSpecies function
                     updateSpecies(speciesToUpdate, newCommonName, newWikiLink);
                     
                 } else if (speciesToUpdate && speciesToUpdate->level != "Species") {
@@ -221,7 +231,8 @@ int main() {
                     cout << "Are you sure you want to delete species '" << found->commonName << " (" << found->name << ")'? (y/n): ";
                     string confirm = readInput();
                     if (toLower(confirm) == "y") {
-                        deleteSpecies(root, deleteSearchName); 
+                        // FIX: Calling the implemented deleteSpecies function
+                        root = deleteSpecies(root, deleteSearchName); 
                     } else {
                         cout << "[INFO] Deletion cancelled.\n";
                     }
